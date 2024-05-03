@@ -12,7 +12,7 @@ This package has also been used for applications such as [tunable filter](https:
 
 If you find this package helpful for your research, please consider citing:
 
-@article{PhysRevLett.126.136101,
+`@article{PhysRevLett.126.136101,
   title = {Theory for Twisted Bilayer Photonic Crystal Slabs},
   author = {Lou, Beicheng and Zhao, Nathan and Minkov, Momchil and Guo, Cheng and Orenstein, Meir and Fan, Shanhui},
   journal = {Phys. Rev. Lett.},
@@ -25,7 +25,7 @@ If you find this package helpful for your research, please consider citing:
   publisher = {American Physical Society},
   doi = {10.1103/PhysRevLett.126.136101},
   url = {https://link.aps.org/doi/10.1103/PhysRevLett.126.136101}
-}
+}`
 
 
 
