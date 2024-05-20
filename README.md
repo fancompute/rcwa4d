@@ -1,4 +1,4 @@
-# rcwa4d
+# RCWA4D
 
 This is an electromagnetic solver based on Rigorous Coupled Wave Analyses (RCWA) for layered structures with incommensurate periodicities. It can be used to obtain the scattering properties (e.g. transmission, reflection, diffractions) in such structures.
 
