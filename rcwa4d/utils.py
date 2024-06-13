@@ -6,6 +6,7 @@ from numpy import cos,sin
 from numpy.linalg import solve as bslash ### S4 mentions it is more efficient to FFT the inverted epsilon, but here we are inverting FFT matrix 
 from scipy.linalg import block_diag
 from copy import copy
+from tqdm import tqdm
 # import cmath
 # import configparser
 # import pdb
@@ -457,84 +458,6 @@ class redheffer_star:
         return Sg;
 
 
-# class convmat2D:
-#     @staticmethod
-#     # def convmat2D(self, A, P, Q):
-#     def convmat2D(A, P, Q):
-#         '''
-#         :param A: input is currently whatever the real space representation of the structure is
-#         :param P: Pspecifies max order in y (so the sum is from -P to P
-#         :param Q: specifies max order in x (so the sum is from -Q to Q
-#         :return:
-#         '''
-#         N = A.shape;
-
-#         NH = (2*P+1) * (2*Q+1) ;
-#         p = list(range(-P, P + 1)); #array of size 2Q+1
-#         q = list(range(-Q, Q + 1));
-
-#         ## do fft
-#         Af = (1 / np.prod(N)) * np.fft.fftshift(np.fft.fft2(A));
-#         # natural question is to ask what does Af consist of..., what is the normalization for?
-
-#         # central indices marking the (0,0) order
-#         p0 = int((N[0] / 2)); #Af grid is Nx, Ny
-#         q0 = int((N[1] / 2)); #no +1 offset or anything needed because the array is orders from -P to P
-
-#         C = np.zeros((NH, NH))
-#         C = C.astype(complex);
-#         for qrow in range(2*Q+1): #remember indices in the arrary are only POSITIVE
-#             for prow in range(2*P+1): #outer sum
-#                 # first term locates z plane, 2nd locates y column, prow locates x
-#                 row = (prow) * (2*Q+1) + qrow; #natural indexing
-#                 for qcol in range(2*Q+1): #inner sum
-#                     for pcol in range(2*P+1):
-#                         col = (pcol) * (2*Q+1) + qcol; #natural indexing
-#                         pfft = p[prow] - p[pcol]; #get index in Af; #index may be negative.
-#                         qfft = q[qrow] - q[qcol];
-#                         C[row, col] = Af[p0 + pfft, q0 + qfft]; #index may be negative.
-#                         # if abs(pfft)>1 or abs(qfft)>1:
-#                         #     C[row,col]*=0.01
-#         # plt.imshow(np.abs(C))
-#         # plt.savefig('tmp3.png')
-
-#         return C;
-
-#     def convmat2D_o(self, A, P, Q):
-#         '''
-#         :param A: input is currently whatever the real space representation of the structure is
-#         :param P: Pspecifies total number of orders
-#         :param Q:
-#         :return:
-#         '''
-#         N = A.shape;
-
-#         NH = P*Q ;
-#         p = list(range(-int(P/2), int(P/2) + 1));
-#         q = list(range(-int(Q/2), int(Q/2) + 1));
-
-#         ## do fft
-#         Af = (1 / np.prod(N)) * np.fft.fftshift(np.fft.fftn(A));
-#         # natural question is to ask what does Af consist of..., what is the normalization for?
-
-#         # central indices marking the (0,0) order
-#         p0 = int(np.floor(N[0] / 2)); #Af grid is Nx, Ny
-#         q0 = int(np.floor(N[1] / 2)); #we have to do minus 1 because indices are from 0 to N-1 for N element arrays
-
-#         C = np.zeros((NH, NH))
-#         C = C.astype(complex);
-#         for qrow in range(Q): #remember indices in the arrary are only POSITIVE
-#             for prow in range(P): #outer sum
-#                 # first term locates z plane, 2nd locates y column, prow locates x
-#                 row = (qrow) * (P) + prow; #natural indexing
-#                 for qcol in range(Q): #inner sum
-#                     for pcol in range(P):
-#                         col = (qcol) * (P) + pcol; #natural indexing
-#                         pfft = p[prow] - p[pcol];
-#                         qfft = q[qrow] - q[qcol];
-#                         C[row, col] = Af[p0 + pfft, q0 + qfft];
-
-#         return C;
 def convmat2D(A, Q, P):
     '''
     :param A: input is currently whatever the real space representation of the structure is
@@ -820,3 +743,103 @@ def expand_V_matrix(Vs,NM,layer=1):
         print("Wasn't planning to implement layer>2")
         return None
     return V_combined
+
+def pk_to_pte_ptm(px,py,k_inc):
+    ### TODO
+    return 1,1j
+def theta_phi_from_kincs(k_incs):
+    ### TODO
+    ### k_incs does not have 2π or freq inside
+    return
+
+
+def get_real_space_bases(k0, gxs, gys, real_space_x_grid, real_space_y_grid):
+    '''
+    gxs, gys: [nG], will be unnormalized by k0
+    '''
+    phase = -1j*(k0*gxs.reshape(-1,1,1)*np.expand_dims(real_space_x_grid,axis=0) 
+            + k0*gys.reshape(-1,1,1)*np.expand_dims(real_space_y_grid,axis=0))
+    return np.exp(phase)
+
+
+def field_fourier_to_real(coefs, real_space_bases): ### 
+    '''
+    coefs: nk,nG
+    real_space_bases: [nG,nX,nY]
+    '''
+    return np.tensordot(coefs,real_space_bases,axes=([-1],[0]))
+
+
+class SummedRCWA():
+    def __init__(self, obj_ref, freq, k_incs, amps, px=1, py=0,
+                    x_min=-10, x_max=10, y_min=-10, y_max=10, num_pts=100):
+        '''
+        Input:
+        k_incs: [nk,2]
+        amps: complex, will be normalized
+        px: polarization(s) along x
+        py: polarization(s) along y
+        x_min, x_max, y_min, y_max, num_pts: spatial extent specifications
+        '''
+        xs =  np.linspace(x_min, x_max, num_pts)
+        ys =  np.linspace(y_min, y_max, num_pts)
+        self.real_space_x_grid, self.real_space_y_grid = np.meshgrid(xs,ys)
+        self.real_space_bases = None
+        self.objs = [] #### for all kincs
+        self.freq = freq
+        self.k_incs = np.array(k_incs)
+        self.amps = np.array(amps).flatten()
+        assert self.k_incs.shape[0] == self.amps.shape[0], "k_incs and amps should have same length"
+        self.kzs = np.sqrt(1-np.sum(k_incs**2,axis=-1)) ### TODO: check this
+        self.px = px
+        self.py = py
+        self.x_min = x_min
+        self.x_max = x_max
+        self.y_min = y_min
+        self.y_max = y_max
+
+        ### to get Gx Gy for normal incidence
+        self.obj_ref = obj_ref
+        obj_ref.set_freq_k(freq,(0,0))
+        self.gxs = np.diag(obj_ref.Kx)
+        self.gys = np.diag(obj_ref.Ky)
+        for k_inc in k_incs:
+            obj = copy(obj_ref)
+            pte,ptm = pk_to_pte_ptm(k_inc,px,py)
+            obj.set_freq_k(freq, kxy_inc=k_inc)
+            self.objs.append(obj)
+
+    def total_RT(self, normalize=True):
+        '''
+        if normalize, should be btw 0 and 1
+        '''
+        for k_inc,obj in zip(self.k_incs,self.objs):
+            pte,ptm = pk_to_pte_ptm(k_inc,self.px,self.py)
+            R,T = obj.get_RT(pte,ptm,storing_intermediate_Smats=True)
+        return R,T
+    def get_field(self, which_layer=0, z_offset=0, real_space=True):
+        ### need to run total_RT first under desired polarization
+        ### TODO: extend to internal fields case
+        ### without x,y,z phases
+        # real_space_bases = get_real_space_bases(self.obj_ref.k0, self.gxs, self.gys, self.real_space_x_grid, self.real_space_y_grid)
+        fields = []
+        # self.real_space_bases = []
+        for obj,k_inc,kz in tqdm(zip(self.objs,self.k_incs,self.kzs)): 
+            _, field = obj.get_RT_field()
+            field = field.reshape(6,-1) ### [6,nG]
+            if not real_space:    
+                fields.append(field) ### [6,nG]
+            else:
+                real_space_bases = get_real_space_bases(obj.k0, np.diag(obj.Kx), np.diag(obj.Ky), self.real_space_x_grid, self.real_space_y_grid)
+                field = field_fourier_to_real(field,real_space_bases) ### [6,nX,nY]
+                field *= np.exp(1j*obj.k0*kz*z_offset)
+                fields.append(field)
+                # self.real_space_bases.append(real_space_bases) ### debugging only
+        fields = np.array(fields) ### nk,6,nG or nk,6,nX,nY]
+        print(self.amps.shape,fields.shape)
+        return np.tensordot(self.amps,fields,axes=([-1],[0]))
+
+
+
+
+
