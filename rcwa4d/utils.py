@@ -764,7 +764,8 @@ def pk_to_pte_ptm(px,py,k_inc):
     p_vector = np.array([px, py, 0])
     pte = np.dot(p_vector, te_vector)
     ptm = np.dot(p_vector, tm_vector)
-    #print(pte,ptm)
+    print('te,tm',te_vector,tm_vector)
+    print('pte,ptm',pte,ptm)
     
     return pte, ptm
 
@@ -837,6 +838,7 @@ class SummedRCWA():
         '''
         for k_inc,obj in zip(self.k_incs,self.objs):
             pte,ptm = pk_to_pte_ptm(self.px,self.py,k_inc)
+            # print(k_inc, pte, ptm)
             R,T = obj.get_RT(pte,ptm,storing_intermediate_Smats=True)
         return R,T
     def get_field(self, which_layer=0, z_offset=0, real_space=True):
@@ -860,7 +862,7 @@ class SummedRCWA():
                 fields.append(field)
                 # self.real_space_bases.append(real_space_bases) ### debugging only
         fields = np.array(fields) ### nk,6,nG or nk,6,nX,nY]
-        print(self.amps.shape,fields.shape)
+        # print(self.amps.shape,fields.shape)
         return np.tensordot(self.amps,fields,axes=([-1],[0]))
 
 
