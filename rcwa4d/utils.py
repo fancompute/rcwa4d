@@ -748,10 +748,6 @@ def pk_to_pte_ptm(px,py,k_inc):
     """
     Convert the given polarization components (px, py) to TE and TM components.
     
-    :param px: Polarization component along x
-    :param py: Polarization component along y
-    :param k_inc: Incident wave vector [kx, ky, kz]
-    :return: TE and TM polarization amplitudes
     """
     kx, ky = k_inc
     kz = np.sqrt(1 - kx**2 - ky**2)
