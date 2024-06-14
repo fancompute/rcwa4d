@@ -745,8 +745,34 @@ def expand_V_matrix(Vs,NM,layer=1):
     return V_combined
 
 def pk_to_pte_ptm(px,py,k_inc):
-    ### TODO
-    return 1,1j
+    """
+    Convert the given polarization components (px, py) to TE and TM components.
+    
+    :param px: Polarization component along x
+    :param py: Polarization component along y
+    :param k_inc: Incident wave vector [kx, ky, kz]
+    :return: TE and TM polarization amplitudes
+    """
+    kx, ky = k_inc
+    kz = np.sqrt(1 - kx**2 - ky**2)
+    #print(kz)
+    #find te,tm components of k_inc
+    k_inc_norm = np.array([kx, ky, kz]) / np.linalg.norm([kx, ky, kz])
+    te_vector = np.cross(k_inc_norm, [0, 0, 1])
+    #te_vector /= np.linalg.norm(te_vector)
+    
+    tm_vector = np.cross(te_vector, k_inc_norm)
+    #tm_vector /= np.linalg.norm(tm_vector)
+    
+    #take in line component of px,py with te,tm
+    p_vector = np.array([px, py, 0])
+    pte = np.dot(p_vector, te_vector)
+    ptm = np.dot(p_vector, tm_vector)
+    #print(pte,ptm)
+    
+    return pte, ptm
+
+
 def theta_phi_from_kincs(k_incs):
     ### TODO
     ### k_incs does not have 2π or freq inside
@@ -805,7 +831,7 @@ class SummedRCWA():
         self.gys = np.diag(obj_ref.Ky)
         for k_inc in k_incs:
             obj = copy(obj_ref)
-            pte,ptm = pk_to_pte_ptm(k_inc,px,py)
+            pte,ptm = pk_to_pte_ptm(px,py,k_inc)
             obj.set_freq_k(freq, kxy_inc=k_inc)
             self.objs.append(obj)
 
@@ -814,7 +840,7 @@ class SummedRCWA():
         if normalize, should be btw 0 and 1
         '''
         for k_inc,obj in zip(self.k_incs,self.objs):
-            pte,ptm = pk_to_pte_ptm(k_inc,self.px,self.py)
+            pte,ptm = pk_to_pte_ptm(self.px,self.py,k_inc)
             R,T = obj.get_RT(pte,ptm,storing_intermediate_Smats=True)
         return R,T
     def get_field(self, which_layer=0, z_offset=0, real_space=True):
@@ -827,11 +853,13 @@ class SummedRCWA():
         for obj,k_inc,kz in tqdm(zip(self.objs,self.k_incs,self.kzs)): 
             _, field = obj.get_RT_field()
             field = field.reshape(6,-1) ### [6,nG]
+            #print(field)
             if not real_space:    
                 fields.append(field) ### [6,nG]
             else:
                 real_space_bases = get_real_space_bases(obj.k0, np.diag(obj.Kx), np.diag(obj.Ky), self.real_space_x_grid, self.real_space_y_grid)
                 field = field_fourier_to_real(field,real_space_bases) ### [6,nX,nY]
+                
                 field *= np.exp(1j*obj.k0*kz*z_offset)
                 fields.append(field)
                 # self.real_space_bases.append(real_space_bases) ### debugging only
