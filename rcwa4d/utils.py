@@ -245,6 +245,8 @@ class rcwa_initial_conditions:
         atm_vector = atm_vector / (np.linalg.norm(atm_vector))
 
         Polarization = pte * ate_vector + ptm * atm_vector; #total E_field incident which is a 3 component vector (ex, ey, ez)
+        #print(pte,ptm)
+        #print("pol", Polarization)
         E_inc = Polarization;
         # go from mode coefficients to FIELDS
         Polarization = np.squeeze(np.array(Polarization));
@@ -744,28 +746,47 @@ def expand_V_matrix(Vs,NM,layer=1):
         return None
     return V_combined
 
-def pk_to_pte_ptm(px,py,k_inc):
+def pk_to_pte_ptm(px, py, k_inc):
     """
     Convert the given polarization components (px, py) to TE and TM components.
     
+    Parameters:
+    px (float): x-component of the polarization vector.
+    py (float): y-component of the polarization vector.
+    k_inc: Incident wave vector.
+    
+    Returns:
+    pte: TE component of the polarization.
+    ptm: TM component of the polarization.
     """
+    # px,py = 1/np.sqrt(2),-1j/np.sqrt(2)
     kx, ky = k_inc
     kz = np.sqrt(1 - kx**2 - ky**2)
     #print(kz)
     #find te,tm components of k_inc
     k_inc_norm = np.array([kx, ky, kz]) / np.linalg.norm([kx, ky, kz])
-    te_vector = np.cross(k_inc_norm, [0, 0, 1])
-    #te_vector /= np.linalg.norm(te_vector)
+
+    if k_inc_norm[0] != 0: # theta != 0 condition
+        ate_vector = np.cross(k_inc_norm, [0, 0, -1]) # Normal vector in negative z dir
+        ate_vector = ate_vector / np.linalg.norm(ate_vector)
+    else:
+        ate_vector = np.array([0, 1, 0])
+
     
-    tm_vector = np.cross(te_vector, k_inc_norm)
-    #tm_vector /= np.linalg.norm(tm_vector)
+    atm_vector = np.cross(ate_vector, k_inc_norm)
+    atm_vector = atm_vector / np.linalg.norm(atm_vector)
     
-    #take in line component of px,py with te,tm
-    p_vector = np.array([px, py, 0])
-    pte = np.dot(p_vector, te_vector)
-    ptm = np.dot(p_vector, tm_vector)
-    print('te,tm',te_vector,tm_vector)
-    print('pte,ptm',pte,ptm)
+    A = np.array([ate_vector[:2], atm_vector[:2]]).T
+    
+    p = np.array([px, py])
+    
+    pte_ptm = np.linalg.solve(A, p)
+    
+    pte = pte_ptm[0]
+    ptm = pte_ptm[1]
+    # pte,ptm = 1/np.sqrt(2),1j/np.sqrt(2)
+
+
     
     return pte, ptm
 
@@ -794,8 +815,8 @@ def field_fourier_to_real(coefs, real_space_bases): ###
 
 
 class SummedRCWA():
-    def __init__(self, obj_ref, freq, k_incs, amps, px=1, py=0,
-                    x_min=-10, x_max=10, y_min=-10, y_max=10, num_pts=100):
+    def __init__(self, obj_ref, freq, k_incs, amps, x_min, x_max, y_min, y_max,
+                 px=1, py=0,num_pts=100):
         '''
         Input:
         k_incs: [nk,2]
@@ -841,7 +862,7 @@ class SummedRCWA():
             # print(k_inc, pte, ptm)
             R,T = obj.get_RT(pte,ptm,storing_intermediate_Smats=True)
         return R,T
-    def get_field(self, which_layer=0, z_offset=0, real_space=True):
+    def get_field(self, z_offset, which_layers, internal, real_space=True):
         ### need to run total_RT first under desired polarization
         ### TODO: extend to internal fields case
         ### without x,y,z phases
@@ -849,7 +870,10 @@ class SummedRCWA():
         fields = []
         # self.real_space_bases = []
         for obj,k_inc,kz in tqdm(zip(self.objs,self.k_incs,self.kzs)): 
-            _, field = obj.get_RT_field()
+            if internal is not True:
+                _, field = obj.get_RT_field()
+            else:
+                field = np.array(obj.get_internal_field(which_layers,z_offset))
             field = field.reshape(6,-1) ### [6,nG]
             #print(field)
             if not real_space:    
@@ -857,8 +881,8 @@ class SummedRCWA():
             else:
                 real_space_bases = get_real_space_bases(obj.k0, np.diag(obj.Kx), np.diag(obj.Ky), self.real_space_x_grid, self.real_space_y_grid)
                 field = field_fourier_to_real(field,real_space_bases) ### [6,nX,nY]
-                
-                field *= np.exp(1j*obj.k0*kz*z_offset)
+            #    print(np.exp(1j*obj.k0*kz*0.5))
+                field *= np.exp(1j*obj.k0*kz*z_offset[0])
                 fields.append(field)
                 # self.real_space_bases.append(real_space_bases) ### debugging only
         fields = np.array(fields) ### nk,6,nG or nk,6,nX,nY]

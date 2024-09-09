@@ -556,7 +556,7 @@ class rcwa:
              (np.array([rx[num_diffractions//2,0],ry[num_diffractions//2,0],rz[num_diffractions//2,0]]),
              np.array([tx[num_diffractions//2,0],ty[num_diffractions//2,0],tz[num_diffractions//2,0]]))
 
-    def get_internal_field(self, which_layers = None, offsets=None):
+    def get_internal_field(self, which_layers, offsets):
         '''
         run after self.get_RT (where incidence is set)
         which_layers: list of 0-indexed layer indices, for which we want field to be constructed
