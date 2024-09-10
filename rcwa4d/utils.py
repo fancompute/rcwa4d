@@ -762,39 +762,40 @@ def pk_to_pte_ptm(px, py, k_inc):
     # px,py = 1/np.sqrt(2),-1j/np.sqrt(2)
     kx, ky = k_inc
     kz = np.sqrt(1 - kx**2 - ky**2)
-    #print(kz)
-    #find te,tm components of k_inc
     k_inc_norm = np.array([kx, ky, kz]) / np.linalg.norm([kx, ky, kz])
-
-    if k_inc_norm[0] != 0: # theta != 0 condition
+    ### get spherical angle of k_inc
+    theta, phi = theta_phi_from_kincs([np.array([kx,ky,kz])])
+    theta,phi = theta[0],phi[0]
+    # pz = np.sqrt(px**2 + py**2) * np.tan(theta)
+    ### TODO: there could be various variations 
+    ### (e.g. different definition of pz below; whether we want to have gaussian over Ex or Etot)
+    pz = -np.tan(theta) * (px * np.cos(phi) + py * np.sin(phi))
+    p = np.array([px, py, pz])
+    ### get direction of te,tm
+    if theta != 0: # theta != 0 condition
         ate_vector = np.cross(k_inc_norm, [0, 0, -1]) # Normal vector in negative z dir
         ate_vector = ate_vector / np.linalg.norm(ate_vector)
     else:
         ate_vector = np.array([0, 1, 0])
-
-    
     atm_vector = np.cross(ate_vector, k_inc_norm)
     atm_vector = atm_vector / np.linalg.norm(atm_vector)
-    
-    A = np.array([ate_vector[:2], atm_vector[:2]]).T
-    
-    p = np.array([px, py])
-    
-    pte_ptm = np.linalg.solve(A, p)
-    
-    pte = pte_ptm[0]
-    ptm = pte_ptm[1]
-    # pte,ptm = 1/np.sqrt(2),1j/np.sqrt(2)
-
-
-    
+    ### get projection of px,py onto te,tm
+    pte = np.dot(p, ate_vector)
+    ptm = np.dot(p, atm_vector)
+    # print(k_inc_norm)
+    # print('ate atm',ate_vector,atm_vector)
+    # print('px py pz',px,py,pz)
+    # print('pte ptm',pte,ptm)
     return pte, ptm
 
 
 def theta_phi_from_kincs(k_incs):
-    ### TODO
+    ### TODO: check consistency with rcwa4d set_freq_k
     ### k_incs does not have 2π or freq inside
-    return
+    k_incs = np.array(k_incs)
+    theta = np.arccos(k_incs[:, 2])
+    phi = np.arctan2(k_incs[:, 1], k_incs[:, 0])
+    return theta, phi
 
 
 def get_real_space_bases(k0, gxs, gys, real_space_x_grid, real_space_y_grid):
@@ -806,17 +807,22 @@ def get_real_space_bases(k0, gxs, gys, real_space_x_grid, real_space_y_grid):
     return np.exp(phase)
 
 
-def field_fourier_to_real(coefs, real_space_bases): ### 
+def field_fourier_to_real(coefs, real_space_bases, whether_sum_k=False):
     '''
     coefs: nk,nG
     real_space_bases: [nG,nX,nY]
+    returns: [nk,nX,nY] or [nX,nY] depending on whether_sum_k
     '''
-    return np.tensordot(coefs,real_space_bases,axes=([-1],[0]))
+    field = np.tensordot(coefs,real_space_bases,axes=([-1],[0]))
+    if not whether_sum_k:
+        return field
+    else:
+        return np.sum(field,axis=0)
 
 
 class SummedRCWA():
-    def __init__(self, obj_ref, freq, k_incs, amps, x_min, x_max, y_min, y_max,
-                 px=1, py=0,num_pts=100):
+    def __init__(self, obj_ref, freq, k_incs, amps, px=1, py=0,
+                    x_min=-10, x_max=10, y_min=-10, y_max=10, num_pts=100):
         '''
         Input:
         k_incs: [nk,2]
@@ -859,34 +865,40 @@ class SummedRCWA():
         '''
         for k_inc,obj in zip(self.k_incs,self.objs):
             pte,ptm = pk_to_pte_ptm(self.px,self.py,k_inc)
-            # print(k_inc, pte, ptm)
             R,T = obj.get_RT(pte,ptm,storing_intermediate_Smats=True)
         return R,T
-    def get_field(self, z_offset, which_layers, internal, real_space=True):
+    
+    def get_field(self, which_layer=0, z_offset=0, real_space=True):
         ### need to run total_RT first under desired polarization
         ### TODO: extend to internal fields case
+        ### TODO: extend to reflection
         ### without x,y,z phases
         # real_space_bases = get_real_space_bases(self.obj_ref.k0, self.gxs, self.gys, self.real_space_x_grid, self.real_space_y_grid)
         fields = []
         # self.real_space_bases = []
+        if which_layer == -1 or which_layer == len(self.objs[0].layer_thicknesses):
+            internal = False
+            # print("Plotting outside field")
+        else:
+            internal = True
+            # print("Plotting internal field")
         for obj,k_inc,kz in tqdm(zip(self.objs,self.k_incs,self.kzs)): 
             if internal is not True:
                 _, field = obj.get_RT_field()
             else:
-                field = np.array(obj.get_internal_field(which_layers,z_offset))
+                field = np.array(obj.get_internal_field([which_layer],[z_offset]))
             field = field.reshape(6,-1) ### [6,nG]
-            #print(field)
+            field = np.ones((6,3))
+            # print(k_inc,'\n',field[0,:])
             if not real_space:    
                 fields.append(field) ### [6,nG]
             else:
                 real_space_bases = get_real_space_bases(obj.k0, np.diag(obj.Kx), np.diag(obj.Ky), self.real_space_x_grid, self.real_space_y_grid)
                 field = field_fourier_to_real(field,real_space_bases) ### [6,nX,nY]
-            #    print(np.exp(1j*obj.k0*kz*0.5))
-                field *= np.exp(1j*obj.k0*kz*z_offset[0])
+                field *= np.exp(-1j*obj.k0*kz*z_offset)
                 fields.append(field)
                 # self.real_space_bases.append(real_space_bases) ### debugging only
         fields = np.array(fields) ### nk,6,nG or nk,6,nX,nY]
-        # print(self.amps.shape,fields.shape)
         return np.tensordot(self.amps,fields,axes=([-1],[0]))
 
 
