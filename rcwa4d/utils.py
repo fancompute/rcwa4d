@@ -888,7 +888,6 @@ class SummedRCWA():
             else:
                 field = np.array(obj.get_internal_field([which_layer],[z_offset]))
             field = field.reshape(6,-1) ### [6,nG]
-            field = np.ones((6,3))
             # print(k_inc,'\n',field[0,:])
             if not real_space:    
                 fields.append(field) ### [6,nG]
