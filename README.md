@@ -135,4 +135,4 @@ as well as a series of applications:
 
 For collaborations and inquiries, please contact beichenglou@stanford.edu.
 
-Also, feel free to reach out for feature requests. This repo is casually but actively maintained.
+Also, feel free to reach out for feature requests. This repo is casually but actively maintained : )
