@@ -10,9 +10,10 @@ This package has also been used for applications such as [tunable filter](https:
 
 
 
-If you find this package helpful for your research, please consider citing:
+### If you find this package helpful for your research, please consider citing:
 
-(the companion paper for this repo)
+*(the companion paper for this repo)*
+
 `@article{LOU2025109356,
   title = {RCWA4D: Electromagnetic solver for layered structures with incommensurate periodicities},
   journal = {Computer Physics Communications},
@@ -27,7 +28,8 @@ If you find this package helpful for your research, please consider citing:
   abstract = {We describe RCWA4D, an electromagnetic solver for layered structures with incommensurate periodicities. Our method is based on an extension of the rigorous coupled wave analysis. We illustrate our method on the example of twisted bilayer photonic crystal and show that various properties of such structures can be reliably simulated. The method can be generalized to multi-layer structures in general in which each layer is periodic or quasi-periodic.}
 }`
 
-(the first paper on the algorithm)
+*(the first paper on the algorithm)*
+
 `@article{PhysRevLett.126.136101,
   title = {Theory for Twisted Bilayer Photonic Crystal Slabs},
   author = {Lou, Beicheng and Zhao, Nathan and Minkov, Momchil and Guo, Cheng and Orenstein, Meir and Fan, Shanhui},
@@ -43,7 +45,8 @@ If you find this package helpful for your research, please consider citing:
   url = {https://link.aps.org/doi/10.1103/PhysRevLett.126.136101}
 }`
 
-(the first experimental verification, done in microwave)
+*(the first experimental verification, done in microwave)*
+
 `@article{sciadv.add4339,
   author = {Beicheng Lou  and Benjamin Wang  and Jesse A Rodríguez  and Mark Cappelli  and Shanhui Fan },
   title = {Tunable guided resonance in twisted bilayer photonic crystal},
@@ -57,7 +60,8 @@ If you find this package helpful for your research, please consider citing:
   eprint = {https://www.science.org/doi/pdf/10.1126/sciadv.add4339}
 }`
 
-(the first experimental verification in optical frequency, with very comprehensive comparisons)
+*(the first experimental verification in optical frequency, with very comprehensive comparisons)*
+
 `@article{sciadv.adh8498,
   author = {Haoning Tang  and Beicheng Lou  and Fan Du  and Mingjie Zhang  and Xueqi Ni  and Weijie Xu  and Rebekah Jin  and Shanhui Fan  and Eric Mazur },
   title = {Experimental probe of twist angle–dependent band structure of on-chip optical bilayer photonic crystal},
@@ -73,7 +77,8 @@ If you find this package helpful for your research, please consider citing:
 
 as well as a series of applications:
 
-(tunable frequency filter)
+*(tunable frequency filter)*
+
 `@article{lou_tunable_2022,
   title = {Tunable Frequency Filter Based on Twisted Bilayer Photonic Crystal Slabs},
   volume = {9},
@@ -88,7 +93,8 @@ as well as a series of applications:
   note = {Publisher: American Chemical Society},
 }`
 
-(tunable thermal emission)
+*(tunable thermal emission)*
+
 `@article{guo_wide_2021,
     author = {Guo, Cheng and Guo, Yu and Lou, Beicheng and Fan, Shanhui},
     title = "{Wide wavelength-tunable narrow-band thermal radiation from moiré patterns}",
@@ -103,7 +109,8 @@ as well as a series of applications:
     url = {https://doi.org/10.1063/5.0047308}
 }`
 
-(reconfigurable optical singularity)
+*(reconfigurable optical singularity)*
+
 `@article{ni2024three,
   title={Three-Dimensional Reconfigurable Optical Singularities in Bilayer Photonic Crystals},
   author={Ni, Xueqi and Liu, Yuan and Lou, Beicheng and Zhang, Mingjie and Hu, Evelyn L and Fan, Shanhui and Mazur, Eric and Tang, Haoning},
@@ -115,7 +122,8 @@ as well as a series of applications:
   publisher={APS}
 }`
 
-(smart adaptive sensing)
+*(smart adaptive sensing)*
+
 `@article{tang2023chip,
   title={On-Chip Multidimensional Dynamic Control of Twisted Moir$\backslash$'e Photonic Crystal for Smart Sensing and Imaging},
   author={Tang, Haoning and Lou, Beicheng and Du, Fan and Gao, Guangqi and Zhang, Mingjie and Ni, Xueqi and Hu, Evelyn and Yacoby, Amir and Cao, Yuan and Fan, Shanhui and others},
@@ -127,4 +135,4 @@ as well as a series of applications:
 
 For collaborations and inquiries, please contact beichenglou@stanford.edu.
 
-Also, feel free to reach out for feature requests. This repo is casually but actively maintained.
+Also, feel free to reach out for feature requests. This repo is casually but actively maintained : )
