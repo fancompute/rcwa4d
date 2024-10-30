@@ -9,7 +9,7 @@ from copy import copy
 from tqdm import tqdm
 # import cmath
 # import configparser
-# import pdb
+import pdb
 # import pickle
 # import time
 
@@ -813,7 +813,8 @@ class SummedRCWA():
         self.k_incs = np.array(k_incs)
         self.amps = np.array(amps).flatten()
         assert self.k_incs.shape[0] == self.amps.shape[0], "k_incs and amps should have same length"
-        self.kzs = np.sqrt(1-np.sum(k_incs**2,axis=-1)) ### TODO: check this
+        # self.kzs = np.sqrt(1-np.sum(k_incs**2,axis=-1)) ### TODO: check this
+        self.kzs = []
         self.px = px
         self.py = py
         self.x_min = x_min
@@ -831,6 +832,7 @@ class SummedRCWA():
             pte,ptm = pk_to_pte_ptm(px,py,k_inc)
             obj.set_freq_k(freq, kxy_inc=k_inc)
             self.objs.append(obj)
+            self.kzs.append(np.sqrt(1-np.diag(obj.Kx)**2-np.diag(obj.Ky)**2-1e-9j))
 
     def total_RT(self, normalize=True):
         '''
@@ -856,9 +858,9 @@ class SummedRCWA():
                 fields.append(field) ### [6,nG]
             else:
                 real_space_bases = get_real_space_bases(obj.k0, np.diag(obj.Kx), np.diag(obj.Ky), self.real_space_x_grid, self.real_space_y_grid)
+                field *= np.exp(-1j*obj.k0*kz*z_offset)
                 field = field_fourier_to_real(field,real_space_bases) ### [6,nX,nY]
-                
-                field *= np.exp(1j*obj.k0*kz*z_offset)
+                # pdb.set_trace()
                 fields.append(field)
                 # self.real_space_bases.append(real_space_bases) ### debugging only
         fields = np.array(fields) ### nk,6,nG or nk,6,nX,nY]
