@@ -840,7 +840,8 @@ class SummedRCWA():
         self.k_incs = np.array(k_incs)
         self.amps = np.array(amps).flatten()
         assert self.k_incs.shape[0] == self.amps.shape[0], "k_incs and amps should have same length"
-        self.kzs = np.sqrt(1-np.sum(k_incs**2,axis=-1)) ### TODO: check this
+        # self.kzs = np.sqrt(1-np.sum(k_incs**2,axis=-1)) ### TODO: check this
+        self.kzs = []
         self.px = px
         self.py = py
         self.x_min = x_min
@@ -858,6 +859,7 @@ class SummedRCWA():
             pte,ptm = pk_to_pte_ptm(px,py,k_inc)
             obj.set_freq_k(freq, kxy_inc=k_inc)
             self.objs.append(obj)
+            self.kzs.append(np.sqrt(1-np.diag(obj.Kx)**2-np.diag(obj.Ky)**2-1e-9j))
 
     def total_RT(self, normalize=True):
         '''
@@ -865,39 +867,31 @@ class SummedRCWA():
         '''
         for k_inc,obj in zip(self.k_incs,self.objs):
             pte,ptm = pk_to_pte_ptm(self.px,self.py,k_inc)
+            # print(k_inc, pte, ptm)
             R,T = obj.get_RT(pte,ptm,storing_intermediate_Smats=True)
         return R,T
-    
     def get_field(self, which_layer=0, z_offset=0, real_space=True):
         ### need to run total_RT first under desired polarization
         ### TODO: extend to internal fields case
-        ### TODO: extend to reflection
         ### without x,y,z phases
         # real_space_bases = get_real_space_bases(self.obj_ref.k0, self.gxs, self.gys, self.real_space_x_grid, self.real_space_y_grid)
         fields = []
         # self.real_space_bases = []
-        if which_layer == -1 or which_layer == len(self.objs[0].layer_thicknesses):
-            internal = False
-            # print("Plotting outside field")
-        else:
-            internal = True
-            # print("Plotting internal field")
         for obj,k_inc,kz in tqdm(zip(self.objs,self.k_incs,self.kzs)): 
-            if internal is not True:
-                _, field = obj.get_RT_field()
-            else:
-                field = np.array(obj.get_internal_field([which_layer],[z_offset]))
+            _, field = obj.get_RT_field()
             field = field.reshape(6,-1) ### [6,nG]
-            # print(k_inc,'\n',field[0,:])
+            #print(field)
             if not real_space:    
                 fields.append(field) ### [6,nG]
             else:
                 real_space_bases = get_real_space_bases(obj.k0, np.diag(obj.Kx), np.diag(obj.Ky), self.real_space_x_grid, self.real_space_y_grid)
-                field = field_fourier_to_real(field,real_space_bases) ### [6,nX,nY]
                 field *= np.exp(-1j*obj.k0*kz*z_offset)
+                field = field_fourier_to_real(field,real_space_bases) ### [6,nX,nY]
+                # pdb.set_trace()
                 fields.append(field)
                 # self.real_space_bases.append(real_space_bases) ### debugging only
         fields = np.array(fields) ### nk,6,nG or nk,6,nX,nY]
+        # print(self.amps.shape,fields.shape)
         return np.tensordot(self.amps,fields,axes=([-1],[0]))
 
 
