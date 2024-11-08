@@ -844,6 +844,7 @@ class SummedRCWA():
             R,T = obj.get_RT(pte,ptm,storing_intermediate_Smats=True)
         return R,T
     def get_field(self, which_layer=0, z_offset=0, real_space=True):
+        ### currently only supporting which_layer=0 or -1, for R and T sides; could extend to internal field upon requests
         ### need to run total_RT first under desired polarization
         ### TODO: extend to internal fields case
         ### without x,y,z phases
@@ -851,8 +852,13 @@ class SummedRCWA():
         fields = []
         # self.real_space_bases = []
         for obj,k_inc,kz in tqdm(zip(self.objs,self.k_incs,self.kzs)): 
-            _, field = obj.get_RT_field()
-            field = field.reshape(6,-1) ### [6,nG]
+            field_r, field_t = obj.get_RT_field()
+            if which_layer==0:
+                field = field_r.reshape(6,-1) ### [6,nG]
+            elif which_layer==-1:
+                field = field_t.reshape(6,-1) ### [6,nG]
+            else:
+                raise ValueError('Unrecognized which_layer')
             #print(field)
             if not real_space:    
                 fields.append(field) ### [6,nG]
