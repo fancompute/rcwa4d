@@ -5,11 +5,11 @@ import itertools
 from numpy import cos,sin
 from numpy.linalg import solve as bslash ### S4 mentions it is more efficient to FFT the inverted epsilon, but here we are inverting FFT matrix 
 from scipy.linalg import block_diag
-from copy import copy
+from copy import deepcopy as copy
 from tqdm import tqdm
 # import cmath
 # import configparser
-# import pdb
+import pdb
 # import pickle
 # import time
 
@@ -871,6 +871,7 @@ class SummedRCWA():
             R,T = obj.get_RT(pte,ptm,storing_intermediate_Smats=True)
         return R,T
     def get_field(self, which_layer=0, z_offset=0, real_space=True):
+        ### currently only supporting which_layer=0 or -1, for R and T sides; could extend to internal field upon requests
         ### need to run total_RT first under desired polarization
         ### TODO: extend to internal fields case
         ### without x,y,z phases
@@ -878,8 +879,22 @@ class SummedRCWA():
         fields = []
         # self.real_space_bases = []
         for obj,k_inc,kz in tqdm(zip(self.objs,self.k_incs,self.kzs)): 
-            _, field = obj.get_RT_field()
-            field = field.reshape(6,-1) ### [6,nG]
+            field_r, field_t = obj.get_RT_field()
+            if which_layer==0:
+                field_r, field_t = obj.get_RT_field()
+                field = field_r.reshape(6,-1) ### [6,nG]
+            elif which_layer==-1 or which_layer==len(self.objs[0].layer_thicknesses):
+                field_r, field_t = obj.get_RT_field()
+                field = field_t.reshape(6,-1) ### [6,nG]
+            else:
+                # raise ValueError('Unrecognized which_layer')
+                field = obj.get_internal_field([which_layer],[z_offset])
+                field = np.array(field).reshape(6,-1) ### [6,nG]
+                print('kx,ky',k_inc)
+                print(np.diag(obj.Kx))
+                print(np.diag(obj.Ky))
+                print(np.around(field,2))
+
             #print(field)
             if not real_space:    
                 fields.append(field) ### [6,nG]
