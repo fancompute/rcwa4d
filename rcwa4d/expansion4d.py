@@ -573,6 +573,7 @@ class rcwa:
             if self.verbose:
                 print(f'getting internal field for layer {l} offset {z}')
             Smat = self.internal_Smats[l]
+            # print('Smat\n',Smat)
             ### cl1_minus, cl1_plus are mode coefficients immediately before the layer in gap medium
             cl1_minus = np.linalg.solve(Smat['S12'], self.reflected - Smat['S11'].dot(self.cinc)) ### backward wave before l-th layer
             cl1_plus = Smat['S21'].dot(self.cinc) + Smat['S22'].dot(cl1_minus)
@@ -583,6 +584,7 @@ class rcwa:
             phase = np.diag(np.exp(np.concatenate([-self.internal_lambdas[l]*self.k0*z, self.internal_lambdas[l]*self.k0*z])))
             field_xy = mode_to_fourier_l.dot(phase.dot(mode_coeff)) ### len([E,H]) * len([x,y]) * num_Gs
             self.field_xy = field_xy ### ??? debugging
+            print('mode coeff\n',mode_coeff)
             ### need to invert e_conv and mu_conv to get Ez and Hz
             if self.twist!=0:
                 sx, sy, ux, uy = field_xy.reshape(4,self.NM**2)
