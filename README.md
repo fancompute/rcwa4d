@@ -2,13 +2,20 @@
 
 This is an electromagnetic solver based on Rigorous Coupled Wave Analyses (RCWA) for layered structures with incommensurate periodicities. It can be used to obtain the scattering properties (e.g. transmission, reflection, diffractions) in such structures.
 
+# Example
+
+The example usage is shown in the Jupyter notebooks.
+A typical transmission spectra as a function of frequency, incident angle, twist angle is:
+
+![Example band structure & twist angle dependence](./assets/example-band.png)
+
+# Reference
+
 The theory and preliminary results of this method are described in [this paper first](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.126.136101) and [this paper later](https://www.sciencedirect.com/science/article/abs/pii/S0010465524002790).
 
 The results obtained from this method has matched well to experiments in [microwave domain](https://www.science.org/doi/10.1126/sciadv.add4339) and [optical domain](https://www.science.org/doi/10.1126/sciadv.adh8498).
 
 This package has also been used for applications such as [tunable filter](https://pubs.acs.org/doi/10.1021/acsphotonics.1c01263).
-
-
 
 ### If you find this package helpful for your research, please consider citing:
 
