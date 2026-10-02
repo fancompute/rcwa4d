@@ -1,0 +1,52 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rcwa4d"
+dynamic = ["version"]
+description = "Rigorous coupled-wave analysis (RCWA) for layered structures with incommensurate periodicities, e.g. twisted bilayer photonic crystals."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Beicheng Lou" }, { name = "Shanhui Fan" }]
+requires-python = ">=3.9"
+dependencies = ["numpy>=1.21", "scipy>=1.7", "tqdm"]
+keywords = ["RCWA", "electromagnetics", "photonics", "photonic crystal", "moire", "twisted bilayer", "scattering matrix"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+
+[project.optional-dependencies]
+examples = ["matplotlib", "jupyter"]
+dev = ["pytest", "ruff"]
+
+[project.urls]
+Homepage = "https://github.com/fancompute/rcwa4d"
+Paper = "https://doi.org/10.1016/j.cpc.2024.109356"
+Issues = "https://github.com/fancompute/rcwa4d/issues"
+
+[tool.hatch.version]
+path = "rcwa4d/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = ["rcwa4d", "tests", "README.md", "LICENSE", "CITATION.cff"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+extend-exclude = ["examples"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "NPY"]
+ignore = ["E741", "N"]
+
+[tool.ruff.lint.per-file-ignores]
+"rcwa4d/solver.py" = ["N802", "N803", "N806"]

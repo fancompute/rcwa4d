@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the paper below."
+title: "RCWA4D"
+authors:
+  - family-names: Lou
+    given-names: Beicheng
+  - family-names: Fan
+    given-names: Shanhui
+repository-code: "https://github.com/fancompute/rcwa4d"
+license: MIT
+preferred-citation:
+  type: article
+  title: "RCWA4D: Electromagnetic solver for layered structures with incommensurate periodicities"
+  authors:
+    - family-names: Lou
+      given-names: Beicheng
+    - family-names: Fan
+      given-names: Shanhui
+  journal: "Computer Physics Communications"
+  volume: 306
+  start: 109356
+  year: 2025
+  doi: "10.1016/j.cpc.2024.109356"
