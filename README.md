@@ -105,6 +105,62 @@ If you use RCWA4D in your research, please cite the companion paper:
 > periodicities," *Computer Physics Communications* **306**, 109356 (2025).
 > [doi:10.1016/j.cpc.2024.109356](https://doi.org/10.1016/j.cpc.2024.109356)
 
+BibTeX entries for this and all papers below are collected [at the end of this section](#bibtex).
+
+## Publications
+
+### Method
+
+1. **RCWA4D: Electromagnetic solver for layered structures with incommensurate periodicities**<br>
+   B. Lou and S. Fan<br>
+   *Computer Physics Communications* **306**, 109356 (2025) ·
+   [doi:10.1016/j.cpc.2024.109356](https://doi.org/10.1016/j.cpc.2024.109356)<br>
+   <sub>The companion paper for this repository.</sub>
+
+2. **Theory for twisted bilayer photonic crystal slabs**<br>
+   B. Lou, N. Zhao, M. Minkov, C. Guo, M. Orenstein, and S. Fan<br>
+   *Physical Review Letters* **126**, 136101 (2021) ·
+   [doi:10.1103/PhysRevLett.126.136101](https://doi.org/10.1103/PhysRevLett.126.136101)<br>
+   <sub>The first paper on the algorithm.</sub>
+
+### Experimental validation
+
+3. **Tunable guided resonance in twisted bilayer photonic crystal**<br>
+   B. Lou, B. Wang, J. A. Rodríguez, M. Cappelli, and S. Fan<br>
+   *Science Advances* **8**, eadd4339 (2022) ·
+   [doi:10.1126/sciadv.add4339](https://doi.org/10.1126/sciadv.add4339)<br>
+   <sub>First experimental verification, at microwave frequencies.</sub>
+
+4. **Experimental probe of twist angle–dependent band structure of on-chip optical bilayer photonic crystal**<br>
+   H. Tang, B. Lou, F. Du, M. Zhang, X. Ni, W. Xu, R. Jin, S. Fan, and E. Mazur<br>
+   *Science Advances* **9**, eadh8498 (2023) ·
+   [doi:10.1126/sciadv.adh8498](https://doi.org/10.1126/sciadv.adh8498)<br>
+   <sub>First experimental verification at optical frequencies, with comprehensive comparisons.</sub>
+
+### Applications
+
+5. **Tunable frequency filter based on twisted bilayer photonic crystal slabs**<br>
+   B. Lou and S. Fan<br>
+   *ACS Photonics* **9**, 800–805 (2022) ·
+   [doi:10.1021/acsphotonics.1c01263](https://doi.org/10.1021/acsphotonics.1c01263)
+
+6. **Wide wavelength-tunable narrow-band thermal radiation from moiré patterns**<br>
+   C. Guo, Y. Guo, B. Lou, and S. Fan<br>
+   *Applied Physics Letters* **118**, 131111 (2021) ·
+   [doi:10.1063/5.0047308](https://doi.org/10.1063/5.0047308)
+
+7. **Three-dimensional reconfigurable optical singularities in bilayer photonic crystals**<br>
+   X. Ni, Y. Liu, B. Lou, M. Zhang, E. L. Hu, S. Fan, E. Mazur, and H. Tang<br>
+   *Physical Review Letters* **132**, 073804 (2024) ·
+   [doi:10.1103/PhysRevLett.132.073804](https://doi.org/10.1103/PhysRevLett.132.073804)
+
+8. **On-chip multidimensional dynamic control of twisted moiré photonic crystal for smart sensing and imaging**<br>
+   H. Tang, B. Lou, F. Du, G. Gao, M. Zhang, X. Ni, E. Hu, A. Yacoby, Y. Cao, S. Fan, *et al.*<br>
+   arXiv preprint (2023) ·
+   [arXiv:2312.09089](https://arxiv.org/abs/2312.09089)
+
+### BibTeX
+
 ```bibtex
 @article{lou2025rcwa4d,
   title   = {{RCWA4D}: Electromagnetic solver for layered structures with incommensurate periodicities},
@@ -115,43 +171,80 @@ If you use RCWA4D in your research, please cite the companion paper:
   year    = {2025},
   doi     = {10.1016/j.cpc.2024.109356}
 }
+
+@article{lou2021theory,
+  title   = {Theory for Twisted Bilayer Photonic Crystal Slabs},
+  author  = {Lou, Beicheng and Zhao, Nathan and Minkov, Momchil and Guo, Cheng and Orenstein, Meir and Fan, Shanhui},
+  journal = {Physical Review Letters},
+  volume  = {126},
+  number  = {13},
+  pages   = {136101},
+  year    = {2021},
+  doi     = {10.1103/PhysRevLett.126.136101}
+}
+
+@article{lou2022tunable,
+  title   = {Tunable guided resonance in twisted bilayer photonic crystal},
+  author  = {Lou, Beicheng and Wang, Benjamin and Rodr{\'\i}guez, Jesse A. and Cappelli, Mark and Fan, Shanhui},
+  journal = {Science Advances},
+  volume  = {8},
+  number  = {48},
+  pages   = {eadd4339},
+  year    = {2022},
+  doi     = {10.1126/sciadv.add4339}
+}
+
+@article{tang2023experimental,
+  title   = {Experimental probe of twist angle--dependent band structure of on-chip optical bilayer photonic crystal},
+  author  = {Tang, Haoning and Lou, Beicheng and Du, Fan and Zhang, Mingjie and Ni, Xueqi and Xu, Weijie and Jin, Rebekah and Fan, Shanhui and Mazur, Eric},
+  journal = {Science Advances},
+  volume  = {9},
+  number  = {28},
+  pages   = {eadh8498},
+  year    = {2023},
+  doi     = {10.1126/sciadv.adh8498}
+}
+
+@article{lou2022filter,
+  title   = {Tunable Frequency Filter Based on Twisted Bilayer Photonic Crystal Slabs},
+  author  = {Lou, Beicheng and Fan, Shanhui},
+  journal = {ACS Photonics},
+  volume  = {9},
+  number  = {3},
+  pages   = {800--805},
+  year    = {2022},
+  doi     = {10.1021/acsphotonics.1c01263}
+}
+
+@article{guo2021wide,
+  title   = {Wide wavelength-tunable narrow-band thermal radiation from moir{\'e} patterns},
+  author  = {Guo, Cheng and Guo, Yu and Lou, Beicheng and Fan, Shanhui},
+  journal = {Applied Physics Letters},
+  volume  = {118},
+  number  = {13},
+  pages   = {131111},
+  year    = {2021},
+  doi     = {10.1063/5.0047308}
+}
+
+@article{ni2024three,
+  title   = {Three-Dimensional Reconfigurable Optical Singularities in Bilayer Photonic Crystals},
+  author  = {Ni, Xueqi and Liu, Yuan and Lou, Beicheng and Zhang, Mingjie and Hu, Evelyn L. and Fan, Shanhui and Mazur, Eric and Tang, Haoning},
+  journal = {Physical Review Letters},
+  volume  = {132},
+  number  = {7},
+  pages   = {073804},
+  year    = {2024},
+  doi     = {10.1103/PhysRevLett.132.073804}
+}
+
+@article{tang2023chip,
+  title   = {On-Chip Multidimensional Dynamic Control of Twisted Moir{\'e} Photonic Crystal for Smart Sensing and Imaging},
+  author  = {Tang, Haoning and Lou, Beicheng and Du, Fan and Gao, Guangqi and Zhang, Mingjie and Ni, Xueqi and Hu, Evelyn and Yacoby, Amir and Cao, Yuan and Fan, Shanhui and others},
+  journal = {arXiv preprint arXiv:2312.09089},
+  year    = {2023}
+}
 ```
-
-The method was first introduced in:
-
-> B. Lou, N. Zhao, M. Minkov, C. Guo, M. Orenstein, and S. Fan, "Theory for twisted bilayer
-> photonic crystal slabs," *Phys. Rev. Lett.* **126**, 136101 (2021).
-> [doi:10.1103/PhysRevLett.126.136101](https://doi.org/10.1103/PhysRevLett.126.136101)
-
-<details>
-<summary><b>Related publications</b> (experimental validation and applications)</summary>
-
-Experimental validation:
-
-- B. Lou, B. Wang, J. A. Rodríguez, M. Cappelli, and S. Fan, "Tunable guided resonance in twisted
-  bilayer photonic crystal," *Sci. Adv.* **8**, eadd4339 (2022) — microwave.
-  [doi:10.1126/sciadv.add4339](https://doi.org/10.1126/sciadv.add4339)
-- H. Tang, B. Lou, F. Du, M. Zhang, X. Ni, W. Xu, R. Jin, S. Fan, and E. Mazur, "Experimental probe of
-  twist angle–dependent band structure of on-chip optical bilayer photonic crystal,"
-  *Sci. Adv.* **9**, eadh8498 (2023) — optical.
-  [doi:10.1126/sciadv.adh8498](https://doi.org/10.1126/sciadv.adh8498)
-
-Applications:
-
-- B. Lou and S. Fan, "Tunable frequency filter based on twisted bilayer photonic crystal slabs,"
-  *ACS Photonics* **9**, 800 (2022).
-  [doi:10.1021/acsphotonics.1c01263](https://doi.org/10.1021/acsphotonics.1c01263)
-- C. Guo, Y. Guo, B. Lou, and S. Fan, "Wide wavelength-tunable narrow-band thermal radiation from
-  moiré patterns," *Appl. Phys. Lett.* **118**, 131111 (2021).
-  [doi:10.1063/5.0047308](https://doi.org/10.1063/5.0047308)
-- X. Ni, Y. Liu, B. Lou, M. Zhang, E. L. Hu, S. Fan, E. Mazur, and H. Tang, "Three-dimensional
-  reconfigurable optical singularities in bilayer photonic crystals,"
-  *Phys. Rev. Lett.* **132**, 073804 (2024).
-  [doi:10.1103/PhysRevLett.132.073804](https://doi.org/10.1103/PhysRevLett.132.073804)
-- H. Tang *et al.*, "On-chip multidimensional dynamic control of twisted moiré photonic crystal for
-  smart sensing and imaging," [arXiv:2312.09089](https://arxiv.org/abs/2312.09089) (2023).
-
-</details>
 
 ## Contributing and contact
 
